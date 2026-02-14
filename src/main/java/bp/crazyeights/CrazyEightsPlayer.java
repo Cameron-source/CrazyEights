@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package bp.crazyeights;
 
 /**
@@ -14,6 +10,13 @@ import java.util.List;
 
 public class CrazyEightsPlayer extends Player {
     private final List<PlayingCard> hand = new ArrayList<>();
+
+    /**
+     * Returns the player's hand.
+     */
+    public List<PlayingCard> getHand() {
+        return hand;
+    }
 
     public CrazyEightsPlayer(String name) {
         super(name);
