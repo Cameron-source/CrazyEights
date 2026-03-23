@@ -251,20 +251,5 @@ public class CrazyEightsGame extends Game {
         }
     }
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("How many players? ");
-        int numPlayers = scanner.nextInt();
-        scanner.nextLine(); // consume newline
-        ArrayList<Player> players = new ArrayList<>();
-        for (int i = 1; i <= numPlayers; i++) {
-            System.out.print("Enter name for player " + i + ": ");
-            String name = scanner.nextLine();
-            players.add(new CrazyEightsPlayer(name));
-        }
-        CrazyEightsGame game = new CrazyEightsGame();
-        game.setPlayers(players);
-        game.play();
-        scanner.close();
-    }
+    
 }
