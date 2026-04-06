@@ -6,7 +6,7 @@ package bp.crazyeights;
 
 /**
  *
- * @author Cameron
+ * @author Cameron - Apr 2026
  */
 
 import java.util.ArrayList;
@@ -14,9 +14,10 @@ import java.util.Scanner;
 public class CrazyEightsGame extends Game {
     private static final int MAX_TURNS = 1000; // Safety limit to prevent infinite loops
     private static final int MAX_DRAWS_PER_TURN = 3; // Maximum cards a player can draw per turn
-    protected final GroupOfCards deck = new GroupOfCards(52);
+    protected final Deck deck = new Deck();
     protected PlayingCard topCard;  // The current top card of the discard pile
     protected final ArrayList<PlayingCard> discardPile = new ArrayList<>();  // Cards that have been played
+    protected int declaredSuit = -1; // Active suit declared after an 8 is played (-1 = none)
 
     public CrazyEightsGame() {
         super("Crazy Eights");
@@ -24,21 +25,8 @@ public class CrazyEightsGame extends Game {
 
     @Override
     public void play() {
-        // Build the deck
-        ArrayList<Card> cards = new ArrayList<>();
-        for (int suit = 0; suit < 4; suit++) {
-            for (int rank = 0; rank < 13; rank++) {
-                cards.add(new PlayingCard(rank, suit));
-            }
-        }
-        // Assign cards to deck
-        try {
-            java.lang.reflect.Field f = GroupOfCards.class.getDeclaredField("cards");
-            f.setAccessible(true);
-            f.set(deck, cards);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to set deck cards", e);
-        }
+        Scanner scanner = new Scanner(System.in);
+
         deck.shuffle();
 
         // Deal 5 cards to each player
@@ -52,35 +40,39 @@ public class CrazyEightsGame extends Game {
             }
         }
 
-        // Deal one card to the discard pile
-        topCard = dealOne();
+        // Deal one card to the discard pile (re-draw if it's an 8)
+        do {
+            topCard = dealOne();
+        } while (topCard != null && topCard.getRank() == 7);
         System.out.println("\nTop card: " + topCard);
 
-        // Play the game
-        playGame();
-
-        // Declare winner
-        declareWinner();
+        // Play the game (winner is declared inside playGame)
+        playGame(scanner);
+        scanner.close();
     }
 
     /**
      * Main game loop - players take turns playing cards or drawing from the deck.
+     * @param scanner the shared Scanner reading from System.in
      */
-    protected void playGame() {
+    protected void playGame(Scanner scanner) {
         System.out.println("\nGame Started\n");
         int currentPlayerIndex = 0;
         int turnNumber = 1;
-        Scanner scanner = new Scanner(System.in);
+
         while (true) {
             CrazyEightsPlayer player = (CrazyEightsPlayer) getPlayers().get(currentPlayerIndex);
             System.out.println("Turn " + turnNumber + ": " + player.getName());
+            if (declaredSuit != -1) {
+                System.out.println("Active declared suit: " + getSuitName(declaredSuit));
+            }
             System.out.println("Top card: " + topCard);
             player.printHand();
 
             boolean turnDone = false;
             int drawsThisTurn = 0;
             while (!turnDone) {
-                if (player.hasPlayableCard(topCard)) {
+                if (player.hasPlayableCard(topCard, declaredSuit)) {
                     System.out.println("You have a playable card. Choose an option:");
                     System.out.println("1. Play a card");
                     System.out.println("2. Draw a card (max " + MAX_DRAWS_PER_TURN + ")");
@@ -90,7 +82,7 @@ public class CrazyEightsGame extends Game {
                         ArrayList<PlayingCard> playable = new ArrayList<>();
                         int idx = 1;
                         for (PlayingCard card : player.getHand()) {
-                            if (card.canPlayOn(topCard)) {
+                            if (card.canPlayOn(topCard, declaredSuit)) {
                                 System.out.println(idx + ". " + card);
                                 playable.add(card);
                                 idx++;
@@ -106,6 +98,12 @@ public class CrazyEightsGame extends Game {
                                 discardPile.add(topCard);
                             }
                             topCard = playedCard;
+                            // If an 8 was played, ask the player to declare a suit
+                            if (playedCard.getRank() == 7) {
+                                declaredSuit = chooseSuit(scanner, player.getName());
+                            } else {
+                                declaredSuit = -1;
+                            }
                             turnDone = true;
                         } else {
                             System.out.println("Invalid choice.");
@@ -124,16 +122,7 @@ public class CrazyEightsGame extends Game {
                         }
                         player.receive(drawnCard);
                         System.out.println("You drew: " + drawnCard);
-                        if (drawnCard.canPlayOn(topCard)) {
-                            System.out.println("You must play the drawn card!");
-                            player.removeCard(drawnCard);
-                            System.out.println(player.getName() + " plays: " + drawnCard);
-                            if (topCard != null) {
-                                discardPile.add(topCard);
-                            }
-                            topCard = drawnCard;
-                            turnDone = true;
-                        } else if (drawsThisTurn >= MAX_DRAWS_PER_TURN) {
+                        if (drawsThisTurn >= MAX_DRAWS_PER_TURN) {
                             System.out.println("No playable card after " + MAX_DRAWS_PER_TURN + " draws. Turn ends.");
                             turnDone = true;
                         }
@@ -153,15 +142,8 @@ public class CrazyEightsGame extends Game {
                         }
                         player.receive(drawnCard);
                         System.out.println("You drew: " + drawnCard);
-                        if (drawnCard.canPlayOn(topCard)) {
-                            System.out.println("You must play the drawn card!");
-                            player.removeCard(drawnCard);
-                            System.out.println(player.getName() + " plays: " + drawnCard);
-                            if (topCard != null) {
-                                discardPile.add(topCard);
-                            }
-                            topCard = drawnCard;
-                            turnDone = true;
+                        if (drawnCard.canPlayOn(topCard, declaredSuit)) {
+                            turnDone = true; // player now has a playable card, loop back for their choice
                         }
                     }
                     if (!turnDone) {
@@ -172,18 +154,51 @@ public class CrazyEightsGame extends Game {
             }
 
             if (player.hasNoCards()) {
-                System.out.println(player.getName() + " wins!");
+                declareWinner();
                 break;
             }
             System.out.println();
             currentPlayerIndex = (currentPlayerIndex + 1) % getPlayers().size();
             turnNumber++;
             if (turnNumber > MAX_TURNS) {
-                System.out.println("Game ended.");
+                System.out.println("Game ended after " + MAX_TURNS + " turns.");
+                declareWinner();
                 break;
             }
         }
-        scanner.close();
+    }
+
+    /**
+     * Prompts the active player to choose a suit after playing an 8.
+     * @param scanner the shared Scanner
+     * @param playerName the name of the player choosing
+     * @return the chosen suit index (0=Hearts, 1=Diamonds, 2=Clubs, 3=Spades)
+     */
+    private int chooseSuit(Scanner scanner, String playerName) {
+        System.out.println(playerName + " played an 8! Choose a suit:");
+        System.out.println("1. Hearts");
+        System.out.println("2. Diamonds");
+        System.out.println("3. Clubs");
+        System.out.println("4. Spades");
+        while (true) {
+            System.out.print("Enter choice (1-4): ");
+            String input = scanner.nextLine();
+            switch (input) {
+                case "1": System.out.println("Suit declared: Hearts");   return 0;
+                case "2": System.out.println("Suit declared: Diamonds"); return 1;
+                case "3": System.out.println("Suit declared: Clubs");    return 2;
+                case "4": System.out.println("Suit declared: Spades");   return 3;
+                default:  System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+
+    /**
+     * Returns the suit name for the given suit index.
+     */
+    private String getSuitName(int suit) {
+        String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
+        return (suit >= 0 && suit < suits.length) ? suits[suit] : "Unknown";
     }
 
     private PlayingCard drawCard() {
@@ -198,13 +213,7 @@ public class CrazyEightsGame extends Game {
         System.out.println("Deck empty! Reshuffling discard pile...");
         ArrayList<Card> cardsToShuffle = new ArrayList<>(discardPile);
         discardPile.clear();
-        try {
-            java.lang.reflect.Field f = GroupOfCards.class.getDeclaredField("cards");
-            f.setAccessible(true);
-            f.set(deck, cardsToShuffle);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to reshuffle deck", e);
-        }
+        deck.setCards(cardsToShuffle); // Deck.setCards() replaces the card list
         deck.shuffle();
         return dealOne();
     }

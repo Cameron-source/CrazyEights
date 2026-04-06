@@ -52,14 +52,23 @@ public class CrazyEightsPlayer extends Player {
 
     /**
      * Checks if the player has any cards that can be played on the given card.
+     * @param topCard the current top card
+     * @param declaredSuit the active declared suit after an 8 (-1 if none)
      */
-    public boolean hasPlayableCard(PlayingCard topCard) {
+    public boolean hasPlayableCard(PlayingCard topCard, int declaredSuit) {
         for (PlayingCard card : hand) {
-            if (card.canPlayOn(topCard)) {
+            if (card.canPlayOn(topCard, declaredSuit)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Convenience overload with no declared suit.
+     */
+    public boolean hasPlayableCard(PlayingCard topCard) {
+        return hasPlayableCard(topCard, -1);
     }
 
     /**

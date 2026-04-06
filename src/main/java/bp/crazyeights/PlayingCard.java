@@ -43,17 +43,31 @@ public class PlayingCard extends Card {
     /**
      * Checks if this card can be played on top of another card.
      * A card can be played if it matches the rank or suit, or if this card is an 8 (wild).
+     * If a suit was declared after an 8, the declared suit overrides the top card's suit.
+     * @param other the current top card
+     * @param declaredSuit the suit declared by the player who played an 8 (-1 if no declaration active)
      */
-    public boolean canPlayOn(PlayingCard other) {
+    public boolean canPlayOn(PlayingCard other, int declaredSuit) {
         if (other == null) {
             return false;
         }
-        // 8s are wild
-        if (this.rank == 8) {
+        // 8s are always wild (rank index 7 = "8" in RANKS array)
+        if (this.rank == 7) {
             return true;
         }
-        // Match rank or suit
+        // If a suit was declared after an 8, must match the declared suit
+        if (declaredSuit != -1) {
+            return this.suit == declaredSuit;
+        }
+        // Otherwise match rank or suit of top card
         return this.rank == other.rank || this.suit == other.suit;
+    }
+
+    /**
+     * Convenience overload with no declared suit (declaredSuit = -1).
+     */
+    public boolean canPlayOn(PlayingCard other) {
+        return canPlayOn(other, -1);
     }
 
     @Override
