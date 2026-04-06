@@ -7,6 +7,7 @@ package bp.crazyeights;
 /**
  *
  * @author Cameron
+ * @author Tamim
  */
 public class PlayingCard extends Card {
     private final int rank;
@@ -49,7 +50,7 @@ public class PlayingCard extends Card {
             return false;
         }
         // 8s are wild
-        // 8's are located at index 7 in array
+        // 8's are on index 7
         if (this.rank == 7) {
             return true;
         }

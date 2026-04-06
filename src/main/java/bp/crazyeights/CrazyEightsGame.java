@@ -7,10 +7,12 @@ package bp.crazyeights;
 /**
  *
  * @author Cameron
+ * @author Tamim
  */
 
 import java.util.ArrayList;
 import java.util.Scanner;
+
 public class CrazyEightsGame extends Game {
     private static final int MAX_TURNS = 1000; // Safety limit to prevent infinite loops
     private static final int MAX_DRAWS_PER_TURN = 3; // Maximum cards a player can draw per turn
@@ -18,8 +20,11 @@ public class CrazyEightsGame extends Game {
     protected PlayingCard topCard;  // The current top card of the discard pile
     protected final ArrayList<PlayingCard> discardPile = new ArrayList<>();  // Cards that have been played
 
-    public CrazyEightsGame() {
+    private final Scanner scanner; // new scanner for game
+    
+    public CrazyEightsGame(Scanner scanner) {
         super("Crazy Eights");
+        this.scanner = scanner;
     }
 
     @Override
@@ -31,6 +36,9 @@ public class CrazyEightsGame extends Game {
                 cards.add(new PlayingCard(rank, suit));
             }
         }
+        deck.setCards(cards);
+        
+        /* depreciated
         // Assign cards to deck
         try {
             java.lang.reflect.Field f = GroupOfCards.class.getDeclaredField("cards");
@@ -39,6 +47,8 @@ public class CrazyEightsGame extends Game {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException("Failed to set deck cards", e);
         }
+        */
+        
         deck.shuffle();
 
         // Deal 5 cards to each player
@@ -183,7 +193,7 @@ public class CrazyEightsGame extends Game {
                 break;
             }
         }
-        scanner.close();
+        //scanner.close();, main has scanner, no need to close in this file
     }
 
     private PlayingCard drawCard() {
@@ -196,8 +206,11 @@ public class CrazyEightsGame extends Game {
             return null;
         }
         System.out.println("Deck empty! Reshuffling discard pile...");
-        ArrayList<Card> cardsToShuffle = new ArrayList<>(discardPile);
+        
+        //ArrayList<Card> cardsToShuffle = new ArrayList<>(discardPile);
+        deck.setCards(new ArrayList<>(discardPile));
         discardPile.clear();
+        /* depreciated
         try {
             java.lang.reflect.Field f = GroupOfCards.class.getDeclaredField("cards");
             f.setAccessible(true);
@@ -205,6 +218,7 @@ public class CrazyEightsGame extends Game {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException("Failed to reshuffle deck", e);
         }
+        */
         deck.shuffle();
         return dealOne();
     }
