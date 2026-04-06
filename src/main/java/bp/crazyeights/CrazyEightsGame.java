@@ -95,7 +95,7 @@ public class CrazyEightsGame extends Game {
                     System.out.println("Top card: " + topCard);
                     System.out.println("You have a playable card. Choose an option:");
                     System.out.println("1. Play a card");
-                    System.out.println("2. Draw a card (max:" + MAX_DRAWS_PER_TURN + ", current:"+ (drawsThisTurn + 1) + ")");
+                    System.out.println("2. Draw a card (max:" + MAX_DRAWS_PER_TURN + ", current draws done:" + drawsThisTurn + ")");
                     System.out.println("3. See your hand ");
                     System.out.print("Enter choice (1, 2, 3): ");
                     String choice = scanner.nextLine();
