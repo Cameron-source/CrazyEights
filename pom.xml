@@ -8,6 +8,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>24</maven.compiler.release>
-        <exec.mainClass>bp.crazyeights.CrazyEights</exec.mainClass>
+        <exec.mainClass>bp.crazyeights.main</exec.mainClass>
     </properties>
 </project>
