@@ -45,6 +45,8 @@ public class PlayingCard extends Card {
     /**
      * Checks if this card can be played on top of another card.
      * A card can be played if it matches the rank or suit, or if this card is an 8 (wild).
+     * @param other
+     * @return 
      */
     public boolean canPlayOn(PlayingCard other) {
         if (other == null) {

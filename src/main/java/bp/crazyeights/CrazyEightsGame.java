@@ -286,6 +286,9 @@ public class CrazyEightsGame extends Game {
         int minCards = Integer.MAX_VALUE;
         for (Player p : getPlayers()) {
             CrazyEightsPlayer cp = (CrazyEightsPlayer) p;
+            // print out card and hand info for all players before declaring a winner
+            System.out.println(cp.getName() + ": " + cp.getHandSize());
+            cp.printHand();
             int handSize = cp.getHandSize();
             if (handSize < minCards) {
                 minCards = handSize;
@@ -294,7 +297,8 @@ public class CrazyEightsGame extends Game {
         }
         if (winner != null) {
             System.out.println("Winner: " + winner.getName() + " with " + minCards + " cards left.");
-        } else {
+        } 
+        else {
             System.out.println("No winner.");
         }
     }
