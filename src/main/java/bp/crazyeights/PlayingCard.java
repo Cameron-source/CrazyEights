@@ -71,7 +71,7 @@ public class PlayingCard extends Card {
         int newSuit = Integer.parseInt(scanner.nextLine());
         // catch invalid input
         if (newSuit < 0 || newSuit > 3) {
-            System.out.println("Suit is unchanged.");
+            System.out.println("INVALID INPUT: Suit will remain unchanged.");
             return this;
         }
         // dummy card for choosing the new suit
