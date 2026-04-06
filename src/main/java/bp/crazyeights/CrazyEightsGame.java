@@ -81,7 +81,7 @@ public class CrazyEightsGame extends Game {
         System.out.println("\nGame Started\n");
         int currentPlayerIndex = 0;
         int turnNumber = 1;
-        Scanner scanner = new Scanner(System.in);
+        
         while (true) {
             CrazyEightsPlayer player = (CrazyEightsPlayer) getPlayers().get(currentPlayerIndex);
             System.out.println("Turn " + turnNumber + ": " + player.getName());
@@ -126,7 +126,25 @@ public class CrazyEightsGame extends Game {
                                 }
                                 topCard = playedCard;
                                 turnDone = true;
-                            } 
+                            
+                                // logic for choosing a suit if an 8 (cards with rank 7) is played
+                                if (playedCard.getRank() == 7) {
+                                    System.out.println("You have played an 8. Select the new suit.");
+                                    System.out.println("0. Hearts, 1. Diamonds, 2. Clubs, 3. Spades");
+                                    System.out.print("Enter your choice: ");
+                                    // stores user choice
+                                    int newSuit = Integer.parseInt(scanner.nextLine());
+                                    // default to original rank if invalid input is given
+                                    if (newSuit > 3 || newSuit < 0) {
+                                        System.out.println("Suit is unchanged.");
+                                    }
+                                    // dummy card with chosen suit, keeps same rank of 8
+                                    else {
+                                        topCard = new PlayingCard(playedCard.getRank(), newSuit);
+                                        System.out.println("Suit changed to: " + topCard.getSuitName());
+                                    }   
+                                }
+                            }
                             
                             else {
                                 System.out.println("Invalid choice.");
