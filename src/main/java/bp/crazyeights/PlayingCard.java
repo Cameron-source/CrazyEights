@@ -61,16 +61,19 @@ public class PlayingCard extends Card {
     
     // logic for choosing a suit if an 8 (cards with rank 7) is played
     public PlayingCard chooseSuit(Scanner scanner) {
-        if (this.getRank() == 7) {
-            System.out.println("You have played an 8. Select the new suit.");
-            System.out.println("0. Hearts  1. Diamonds  2. Clubs  3. Spades");
-            System.out.print("Enter your choice: ");
-            int newSuit = Integer.parseInt(scanner.nextLine());
-            // catch invalid input
-            if (newSuit < 0 || newSuit > 3) {
-                System.out.println("Suit is unchanged.");
-                return this;
-            }
+        if (this.getRank() != 7) {
+            return this;
+        }
+        
+        System.out.println("You have played an 8. Select the new suit.");
+        System.out.println("0. Hearts  1. Diamonds  2. Clubs  3. Spades");
+        System.out.print("Enter your choice: ");
+        int newSuit = Integer.parseInt(scanner.nextLine());
+        // catch invalid input
+        if (newSuit < 0 || newSuit > 3) {
+            System.out.println("Suit is unchanged.");
+            return this;
+        }
         // dummy card for choosing the new suit
         PlayingCard newCard = new PlayingCard(this.rank, newSuit);
         System.out.println("Suit changed to: " + newCard.getSuitName());

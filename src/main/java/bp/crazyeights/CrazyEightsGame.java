@@ -95,13 +95,13 @@ public class CrazyEightsGame extends Game {
                     System.out.println("Top card: " + topCard);
                     System.out.println("You have a playable card. Choose an option:");
                     System.out.println("1. Play a card");
-                    System.out.println("2. Draw a card (max " + MAX_DRAWS_PER_TURN + ")");
+                    System.out.println("2. Draw a card (max:" + MAX_DRAWS_PER_TURN + ", current:"+ (drawsThisTurn + 1) + ")");
                     System.out.println("3. See your hand ");
                     System.out.print("Enter choice (1, 2, 3): ");
                     String choice = scanner.nextLine();
                     
                     switch(choice) {
-                        case "1":
+                        case "1": {
                             ArrayList<PlayingCard> playable = new ArrayList<>();
                             int idx = 1;
                             for (PlayingCard card : player.getHand()) {
@@ -137,8 +137,9 @@ public class CrazyEightsGame extends Game {
                                 System.out.println("Invalid choice.");
                             }
                             break;
+                        }
            
-                        case "2":
+                        case "2": {
                             if (drawsThisTurn >= MAX_DRAWS_PER_TURN) {
                                 System.out.println("You have reached the maximum draws for this turn.");
                                 break;
@@ -168,7 +169,7 @@ public class CrazyEightsGame extends Game {
                                 
                                 // logic for choosing a suit if an 8 (cards with rank 7) is played
                                 if (drawnCard.getRank() == 7) {
-                                    topCard = playedCard.chooseSuit(scanner); // logic stored in playing card
+                                    topCard = drawnCard.chooseSuit(scanner); // logic stored in playing card
                                 }
                                 
                                 turnDone = true;
@@ -176,16 +177,20 @@ public class CrazyEightsGame extends Game {
                             else if (drawsThisTurn >= MAX_DRAWS_PER_TURN) {
                                 System.out.println("No playable card after " + MAX_DRAWS_PER_TURN + " draws. Turn ends.");
                                 turnDone = true;
-                            } 
+                            }
                             break;
+                        }
                         
-                        case "3":
+                        case "3": {
                             System.out.println("Player " + player.getName() + " has " + player.getHandSize() + " cards.");
                             player.printHand();
                             break;
+                        }
                             
-                        default:
+                        default: {
                             System.out.println("Invalid choice.");
+                            break;
+                        }
                     
                     } 
                     
@@ -234,7 +239,6 @@ public class CrazyEightsGame extends Game {
                 break;
             }
         }
-        //scanner.close();, main has scanner, no need to close in this file
     }
 
     private PlayingCard drawCard() {
@@ -247,19 +251,8 @@ public class CrazyEightsGame extends Game {
             return null;
         }
         System.out.println("Deck empty! Reshuffling discard pile...");
-        
-        //ArrayList<Card> cardsToShuffle = new ArrayList<>(discardPile);
         deck.setCards(new ArrayList<>(discardPile));
         discardPile.clear();
-        /* depreciated
-        try {
-            java.lang.reflect.Field f = GroupOfCards.class.getDeclaredField("cards");
-            f.setAccessible(true);
-            f.set(deck, cardsToShuffle);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to reshuffle deck", e);
-        }
-        */
         deck.shuffle();
         return dealOne();
     }

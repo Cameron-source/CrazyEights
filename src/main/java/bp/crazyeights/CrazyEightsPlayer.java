@@ -13,6 +13,7 @@ public class CrazyEightsPlayer extends Player {
 
     /**
      * Returns the player's hand.
+     * @return 
      */
     public List<PlayingCard> getHand() {
         return hand;
@@ -37,6 +38,7 @@ public class CrazyEightsPlayer extends Player {
 
     /**
      * Returns the number of cards in the player's hand.
+     * @return 
      */
     public int getHandSize() {
         return hand.size();
@@ -52,6 +54,8 @@ public class CrazyEightsPlayer extends Player {
 
     /**
      * Checks if the player has any cards that can be played on the given card.
+     * @param topCard
+     * @return 
      */
     public boolean hasPlayableCard(PlayingCard topCard) {
         for (PlayingCard card : hand) {
@@ -65,6 +69,8 @@ public class CrazyEightsPlayer extends Player {
     /**
      * Finds and plays (removes from hand) the first card that can be played on the given card.
      * Returns null if no card can be played.
+     * @param topCard
+     * @return 
      */
     public PlayingCard playCard(PlayingCard topCard) {
         for (int i = 0; i < hand.size(); i++) {
