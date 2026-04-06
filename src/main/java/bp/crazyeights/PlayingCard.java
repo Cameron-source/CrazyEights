@@ -49,7 +49,8 @@ public class PlayingCard extends Card {
             return false;
         }
         // 8s are wild
-        if (this.rank == 8) {
+        // 8's are located at index 7 in array
+        if (this.rank == 7) {
             return true;
         }
         // Match rank or suit
