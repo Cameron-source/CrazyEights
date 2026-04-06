@@ -129,20 +129,7 @@ public class CrazyEightsGame extends Game {
                             
                                 // logic for choosing a suit if an 8 (cards with rank 7) is played
                                 if (playedCard.getRank() == 7) {
-                                    System.out.println("You have played an 8. Select the new suit.");
-                                    System.out.println("0. Hearts, 1. Diamonds, 2. Clubs, 3. Spades");
-                                    System.out.print("Enter your choice: ");
-                                    // stores user choice
-                                    int newSuit = Integer.parseInt(scanner.nextLine());
-                                    // default to original rank if invalid input is given
-                                    if (newSuit > 3 || newSuit < 0) {
-                                        System.out.println("Suit is unchanged.");
-                                    }
-                                    // dummy card with chosen suit, keeps same rank of 8
-                                    else {
-                                        topCard = new PlayingCard(playedCard.getRank(), newSuit);
-                                        System.out.println("Suit changed to: " + topCard.getSuitName());
-                                    }   
+                                    topCard = playedCard.chooseSuit(scanner); // logic stored in playing card
                                 }
                             }
                             
@@ -178,6 +165,12 @@ public class CrazyEightsGame extends Game {
                                     discardPile.add(topCard);
                                 }
                                 topCard = drawnCard;
+                                
+                                // logic for choosing a suit if an 8 (cards with rank 7) is played
+                                if (drawnCard.getRank() == 7) {
+                                    topCard = playedCard.chooseSuit(scanner); // logic stored in playing card
+                                }
+                                
                                 turnDone = true;
                             } 
                             else if (drawsThisTurn >= MAX_DRAWS_PER_TURN) {
