@@ -16,10 +16,16 @@ public class main {
     public static void main(String[] args) 
     {
         Scanner scanner = new Scanner(System.in); // new scanner, scanner here instead of game
-        
         System.out.print("How many players? ");
         int numPlayers = scanner.nextInt();
         scanner.nextLine(); 
+        // condition: player count must be 1 or greater
+        while (numPlayers < 1) {
+            System.out.println("There must be one player per game.");
+            System.out.print("How many players? ");
+            numPlayers = scanner.nextInt();
+            scanner.nextLine(); 
+        }
         
         ArrayList<Player> players = new ArrayList<>();
         for (int i = 1; i <= numPlayers; i++) {
