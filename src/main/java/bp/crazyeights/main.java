@@ -16,12 +16,12 @@ public class main {
     public static void main(String[] args) 
     {
         Scanner scanner = new Scanner(System.in); // new scanner, scanner here instead of game
-        System.out.print("How many players? ");
+        System.out.print("How many players? (Min: 2)");
         int numPlayers = scanner.nextInt();
         scanner.nextLine(); 
-        // condition: player count must be 1 or greater
-        while (numPlayers < 1) {
-            System.out.println("There must be one player per game.");
+        // condition: player count must be 2 or more
+        while (numPlayers < 2) {
+            System.out.println("There must be a minimum of 2 players per game.");
             System.out.print("How many players? ");
             numPlayers = scanner.nextInt();
             scanner.nextLine(); 
@@ -42,6 +42,4 @@ public class main {
         scanner.close();
         
     }
-    
-    
 }
