@@ -16,17 +16,22 @@ public class main {
     public static void main(String[] args) 
     {
         Scanner scanner = new Scanner(System.in); // new scanner, scanner here instead of game
-        System.out.print("How many players? (Min: 2)");
+        System.out.print("How many players? (Min: 2, Max: 12)");
         int numPlayers = scanner.nextInt();
         scanner.nextLine(); 
-        // condition: player count must be 2 or more
-        while (numPlayers < 2) {
-            System.out.println("There must be a minimum of 2 players per game.");
-            System.out.print("How many players? ");
+        // condition: player count must be between 2 or 12
+        while (numPlayers < 2 | numPlayers > 12) {
+            System.out.println("There must be a minimum of 2 players per game and a maximum of 12.");
+            System.out.print("How many players? (Min: 2, Max: 12)");
             numPlayers = scanner.nextInt();
             scanner.nextLine(); 
         }
         
+        // set deckSize here, decksize changes based on the amount of players added
+        int deckSize = 52;
+        if (numPlayers > 6) {
+            deckSize = 104;
+        }
         ArrayList<Player> players = new ArrayList<>();
         for (int i = 1; i <= numPlayers; i++) {
             System.out.print("Enter name for player " + i + ": ");
@@ -34,7 +39,7 @@ public class main {
             players.add(new CrazyEightsPlayer(name));
         }
         
-        CrazyEightsGame game = new CrazyEightsGame(scanner); // send scanner to CrazyEightsGame
+        CrazyEightsGame game = new CrazyEightsGame(scanner, deckSize); // send scanner to CrazyEightsGame
         
         game.setPlayers(players);
         game.play();

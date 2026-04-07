@@ -24,21 +24,27 @@ public class CrazyEightsGame extends Game {
     private int turnNumber = 1; // moved turn number above for global tracking
 
     private final Scanner scanner; // new scanner for game
+    private int deckSize; // determines size of deck based on check in Main
     
-    public CrazyEightsGame(Scanner scanner) {
+    public CrazyEightsGame(Scanner scanner, int deckSize) {
         super("Crazy Eights");
         this.scanner = scanner;
+        this.deckSize = deckSize;
     }
 
     @Override
     public void play() {
         // Build the deck
         ArrayList<Card> cards = new ArrayList<>();
-        for (int suit = 0; suit < 4; suit++) {
-            for (int rank = 0; rank < 13; rank++) {
-                cards.add(new PlayingCard(rank, suit));
+        int decks = deckSize / 52;
+        for (int d = 0; d < decks; d++) {
+            for (int suit = 0; suit < 4; suit++) {
+                for (int rank = 0; rank < 13; rank++) {
+                    cards.add(new PlayingCard(rank, suit));
+                }
             }
         }
+        deck.setSize(deckSize);
         deck.setCards(cards);
         
         /* depreciated
