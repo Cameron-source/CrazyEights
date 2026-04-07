@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 public class CrazyEightsGame extends Game {
     private static final int MAX_TURNS = 1000; // Safety limit to prevent infinite loops
+    private static final int MAX_DRAWS_PER_TURN = 3; // Maximum cards a player can draw per turn
     protected final Deck deck = new Deck();
     protected PlayingCard topCard;  // The current top card of the discard pile
     protected final ArrayList<PlayingCard> discardPile = new ArrayList<>();  // Cards that have been played
@@ -71,8 +72,17 @@ public class CrazyEightsGame extends Game {
             boolean turnDone = false;
             int drawsThisTurn = 0;
             while (!turnDone) {
-                if (player.hasPlayableCard(topCard, declaredSuit)) {
-                    // Must play a card — drawing is only allowed when you have no playable cards
+                System.out.println("Choose an option:");
+                System.out.println("1. Play a card");
+                System.out.println("2. Draw a card (max:" + MAX_DRAWS_PER_TURN + ", current draws done:" + drawsThisTurn + ")");
+                System.out.println("3. See your hand");
+                System.out.print("Enter choice (1, 2, 3): ");
+                String choice = scanner.nextLine();
+                if (choice.equals("1")) {
+                    if (!player.hasPlayableCard(topCard, declaredSuit)) {
+                        System.out.println("You have no playable cards.");
+                        continue;
+                    }
                     ArrayList<PlayingCard> playable = new ArrayList<>();
                     int idx = 1;
                     for (PlayingCard card : player.getHand()) {
@@ -92,7 +102,6 @@ public class CrazyEightsGame extends Game {
                             discardPile.add(topCard);
                         }
                         topCard = playedCard;
-                        // If an 8 was played, ask the player to declare a suit
                         if (playedCard.getRank() == 7) {
                             declaredSuit = chooseSuit(scanner, player.getName());
                         } else {
@@ -102,24 +111,43 @@ public class CrazyEightsGame extends Game {
                     } else {
                         System.out.println("Invalid choice.");
                     }
-                } else {
-                    // No playable cards — draw one card
-                    System.out.println("No playable cards. Drawing one card...");
-                    PlayingCard drawnCard = drawCard();
-                    if (drawnCard == null) {
-                        System.out.println("Deck empty. Turn ends.");
-                        turnDone = true;
-                    } else {
-                        player.receive(drawnCard);
-                        System.out.println("You drew: " + drawnCard);
-                        if (drawnCard.canPlayOn(topCard, declaredSuit)) {
-                            System.out.println("You can play the drawn card!");
-                            // Loop back so the player can choose to play it
-                        } else {
-                            System.out.println("Cannot play drawn card. Turn ends.");
-                            turnDone = true;
-                        }
+                } else if (choice.equals("2")) {
+                    if (drawsThisTurn >= MAX_DRAWS_PER_TURN) {
+                        System.out.println("You have reached the maximum draws for this turn.");
+                        continue;
                     }
+                    PlayingCard drawnCard = drawCard();
+                    drawsThisTurn++;
+                    if (drawnCard == null) {
+                        System.out.println("Deck empty. Game ends.");
+                        turnDone = true;
+                        break;
+                    }
+                    player.receive(drawnCard);
+                    System.out.println("You drew: " + drawnCard);
+                    if (drawnCard.canPlayOn(topCard, declaredSuit)) {
+                        System.out.println("You must play the drawn card!");
+                        player.removeCard(drawnCard);
+                        System.out.println(player.getName() + " plays: " + drawnCard);
+                        if (topCard != null) {
+                            discardPile.add(topCard);
+                        }
+                        topCard = drawnCard;
+                        if (drawnCard.getRank() == 7) {
+                            declaredSuit = chooseSuit(scanner, player.getName());
+                        } else {
+                            declaredSuit = -1;
+                        }
+                        turnDone = true;
+                    } else if (drawsThisTurn >= MAX_DRAWS_PER_TURN) {
+                        System.out.println("No playable card after " + MAX_DRAWS_PER_TURN + " draws. Turn ends.");
+                        turnDone = true;
+                    }
+                } else if (choice.equals("3")) {
+                    System.out.println("Player " + player.getName() + " has " + player.getHandSize() + " cards.");
+                    player.printHand();
+                } else {
+                    System.out.println("Invalid choice.");
                 }
             }
 
