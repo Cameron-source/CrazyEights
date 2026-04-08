@@ -42,7 +42,7 @@ public class Deck extends GroupOfCards {
     }
 
     // Local card list since GroupOfCards.cards is private and has no setter
-    private ArrayList<Card> deckCards;
+    private ArrayList<Card> deckCards = new ArrayList<>();
 
     /**
      * Returns the deck's card list.
