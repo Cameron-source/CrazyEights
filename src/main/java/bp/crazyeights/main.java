@@ -12,7 +12,7 @@ import java.util.Scanner;
  * @author Cameron
  * @author Tamim
  */
-public class main {
+public class Main {
     public static void main(String[] args) 
     {
         Scanner scanner = new Scanner(System.in); // new scanner, scanner here instead of game
