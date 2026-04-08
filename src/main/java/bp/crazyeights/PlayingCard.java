@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package bp.crazyeights;
-import java.util.Scanner;
 
 /**
  *
@@ -45,42 +44,36 @@ public class PlayingCard extends Card {
     /**
      * Checks if this card can be played on top of another card.
      * A card can be played if it matches the rank or suit, or if this card is an 8 (wild).
-     * @param other
+     * If a suit was declared after an 8, the declared suit overrides the top card's suit.
+     * @param other the current top card
+     * @param declaredSuit the suit declared by the player who played an 8 (-1 if no declaration active)
      * @return 
      */
-    public boolean canPlayOn(PlayingCard other) {
+    public boolean canPlayOn(PlayingCard other, int declaredSuit) {
         if (other == null) {
             return false;
         }
-        // 8s are wild
-        // 8's are on index 7
+        // 8s are always wild (rank index 7 = "8" in RANKS array)
         if (this.rank == 7) {
             return true;
         }
-        // Match rank or suit
+        // If a suit was declared after an 8, must match the declared suit
+        if (declaredSuit != -1) {
+            return this.suit == declaredSuit;
+        }
+        // Otherwise match rank or suit of top card
         return this.rank == other.rank || this.suit == other.suit;
     }
-    
-    // logic for choosing a suit if an 8 (cards with rank 7) is played
-    public PlayingCard chooseSuit(Scanner scanner) {
-        if (this.getRank() != 7) {
-            return this;
-        }
-        
-        System.out.println("You have played an 8. Select the new suit.");
-        System.out.println("0. Hearts  1. Diamonds  2. Clubs  3. Spades");
-        System.out.print("Enter your choice: ");
-        int newSuit = Integer.parseInt(scanner.nextLine());
-        // catch invalid input
-        if (newSuit < 0 || newSuit > 3) {
-            System.out.println("INVALID INPUT: Suit will remain unchanged.");
-            return this;
-        }
-        // dummy card for choosing the new suit
-        PlayingCard newCard = new PlayingCard(this.rank, newSuit);
-        System.out.println("Suit changed to: " + newCard.getSuitName());
-        return newCard;
+
+    /**
+     * Convenience overload with no declared suit (declaredSuit = -1).
+     * @param other current top card
+     * @return 
+     */
+    public boolean canPlayOn(PlayingCard other) {
+        return canPlayOn(other, -1);
     }
+    
         
     @Override
     public String toString() {
