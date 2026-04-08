@@ -24,9 +24,10 @@ public class CrazyEightsGame extends Game {
      
     private int turnNumber = 1; // moved turn number above for global tracking
 
-    private final Scanner scanner; // new scanner for game
+    private final Scanner scanner; // stores scanner for game
     private final int deckSize; // determines size of deck based on check in Main
     
+    // constructor
     public CrazyEightsGame(Scanner scanner, int deckSize) {
         super("Crazy Eights");
         this.scanner = scanner;

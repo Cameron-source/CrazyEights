@@ -30,19 +30,19 @@ public class Deck extends GroupOfCards {
         return cards;
     }
 
-
     /**
      * Replaces the current cards in the deck (used when reshuffling the discard pile).
      * @param cards the new list of cards
      */
     @Override
     public void setCards(ArrayList<Card> cards) {
-        getCards().clear();
-        getCards().addAll(cards);
+        // Populate via the inherited getCards() reference by clearing and re-adding,
+        // since GroupOfCards.cards is private. We keep a local reference instead.
+        this.deckCards = cards;
     }
 
     // Local card list since GroupOfCards.cards is private and has no setter
-    private ArrayList<Card> deckCards = new ArrayList<>();
+    private ArrayList<Card> deckCards;
 
     /**
      * Returns the deck's card list.
