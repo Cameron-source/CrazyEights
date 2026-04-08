@@ -25,7 +25,7 @@ public class CrazyEightsGame extends Game {
     private int turnNumber = 1; // moved turn number above for global tracking
 
     private final Scanner scanner; // new scanner for game
-    private int deckSize; // determines size of deck based on check in Main
+    private final int deckSize; // determines size of deck based on check in Main
     
     public CrazyEightsGame(Scanner scanner, int deckSize) {
         super("Crazy Eights");
@@ -83,7 +83,6 @@ public class CrazyEightsGame extends Game {
             CrazyEightsPlayer player = (CrazyEightsPlayer) getPlayers().get(currentPlayerIndex);
             System.out.println("Turn " + turnNumber + ": " + player.getName());
             System.out.println("Top card: " + topCard);
-            DeckStatus();
             player.printHand();
 
             boolean turnDone = false;
@@ -91,12 +90,15 @@ public class CrazyEightsGame extends Game {
             while (!turnDone) {
                 if (player.hasPlayableCard(topCard, declaredSuit)) {
                     System.out.println("Top card: " + topCard);
+                    if (declaredSuit != -1) {
+                        System.out.println("Active declared suit: " + getSuitName(declaredSuit));
+                    }
                     System.out.println("------------------");
                     System.out.println("You have a playable card. Choose an option:");
                     System.out.println("0. Skip Turn");
                     System.out.println("1. Play a card");
                     System.out.println("2. Draw a card (max:" + MAX_DRAWS_PER_TURN + ", current draws done:" + drawsThisTurn + ")");
-                    System.out.println("3. See your hand ");
+                    System.out.println("3. See hand and deck status");
                     System.out.print("Enter choice (0, 1, 2, 3): ");
                     String choice = scanner.nextLine();
                     
@@ -153,7 +155,7 @@ public class CrazyEightsGame extends Game {
                             else {
                                 System.out.println("Invalid choice.");
                             }
-                            System.out.println("------------------");
+                            System.out.println("--------------------");
                             break;
                         }
                         
@@ -170,10 +172,12 @@ public class CrazyEightsGame extends Game {
                             // catch decks being empty in case
                             if (drawnCard == null) {
                                 System.out.println("Both deck and discard pile are empty. Ending game.");
+                                System.out.println("--------------------");
                                 declareWinner();
                                 return;
                             }
                             
+                            // put cards in hand
                             player.receive(drawnCard);
                             System.out.println("You drew: " + drawnCard);
                         
@@ -181,11 +185,8 @@ public class CrazyEightsGame extends Game {
                             if (player.hasPlayableCard(topCard, declaredSuit)) {
                                 System.out.println("You have a playable card in your hand.");
                             } 
-                            else if (drawsThisTurn >= MAX_DRAWS_PER_TURN) {
-                                System.out.println("No playable or played card after " + MAX_DRAWS_PER_TURN + " draws. Turn ends.");
-                                turnDone = true;
-                            }
-                            System.out.println("------------------");
+
+                            System.out.println("--------------------");
                             break;
                         }
                         
@@ -193,7 +194,8 @@ public class CrazyEightsGame extends Game {
                         case "3": {
                             System.out.println("Player " + player.getName() + " has " + player.getHandSize() + " cards.");
                             player.printHand();
-                            System.out.println("------------------");
+                            System.out.println("--------------------");
+                            DeckStatus();
                             break;
                         }
                         
@@ -205,8 +207,83 @@ public class CrazyEightsGame extends Game {
                     
                     } 
                     
-                } 
+                }
+                
+                // if player has no playable cards
+                else {
+                    System.out.println("Top card: " + topCard);
+                    System.out.println(player.getName() + " has no playable cards in hand, select an option.");
+                    System.out.println("0. Skip Turn");
+                    System.out.println("1. Draw a card (max:" + MAX_DRAWS_PER_TURN + ", current draws done:" + drawsThisTurn + ")");
+                    System.out.println("2. See hand and deck status ");
+                    System.out.print("Enter choice (0, 1, 2): ");
+                    String choice = scanner.nextLine();     
+                    // choices
+                    switch (choice) {
+                        // skip turn
+                        case "0": {
+                            System.out.println(player.getName() + " skips their turn.");
+                            System.out.println("--------------------");
+                            turnDone = true;
+                            break;
+                        }
+                        
+                        // draw card
+                        case "1": {
+                            PlayingCard drawnCard = drawCard();
+                            drawsThisTurn++;
+            
+                            // catch decks being empty in case
+                            if (drawnCard == null) {
+                                System.out.println("Both deck and discard pile are empty. Ending game.");
+                                declareWinner();
+                                return;
+                            }
+                            
+                            // put cards in hand
+                            player.receive(drawnCard);
+                            System.out.println("You drew: " + drawnCard);
+                            
+                            // message to show if card is playable or not
+                            if (player.hasPlayableCard(topCard, declaredSuit)) {
+                                System.out.println("You now have a playable card.");
+                            }
+                            else if (drawsThisTurn >= MAX_DRAWS_PER_TURN) {
+                                System.out.println("You have reached the maximum draws for this turn and have no playable cards. Skipping.");
+                                turnDone = true;
+                                break;
+                            }
+                            else {
+                                System.out.println("No playable cards in hand, draw again.");
+                            }
+                                                        
+                            System.out.println("--------------------");
+                            break;
+                        }  
+                        
+                        // reprint hand
+                        case "2": {
+                            System.out.println("Player " + player.getName() + " has " + player.getHandSize() + " cards.");
+                            player.printHand();
+                            System.out.println("--------------------");
+                            DeckStatus();
+                            break;
+                        }
+                        
+                        // invalid input
+                        default: {
+                            System.out.println("Invalid choice.");
+                            break;
+                        }
+                       
+                       
+                    }
+                                
+                }
             }
+            // line to break up turn text
+            System.out.println("====================\n");
+            
             
             // ends game once player hand is 0
             if (player.hasNoCards()) {
@@ -250,6 +327,7 @@ public class CrazyEightsGame extends Game {
         System.out.println("1. Diamonds");
         System.out.println("2. Clubs");
         System.out.println("3. Spades");
+        System.out.print("Enter choice (0, 1, 2, 3): ");
         
         while(true) {
             int newSuit = Integer.parseInt(scanner.nextLine());
@@ -278,7 +356,7 @@ public class CrazyEightsGame extends Game {
         deck.setCards(new ArrayList<Card>(discardPile));
         discardPile.clear();
         deck.shuffle();
-        System.out.println("Reshuffled " + deck.getSize() + " back into deck.");
+        System.out.println("Reshuffled " + deck.getCards().size() + " back into deck.");
         return dealOne();
     }
 
@@ -316,7 +394,7 @@ public class CrazyEightsGame extends Game {
             // print out card and hand info for all players before declaring a winner
             System.out.println(cp.getName() + ": " + cp.getHandSize());
             cp.printHand();
-            System.out.println("----------");
+            System.out.println("====================");
             
             int handSize = cp.getHandSize();
             if (handSize < minCards) {
