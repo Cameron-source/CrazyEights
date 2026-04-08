@@ -3,10 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package bp.crazyeights;
+import java.util.Scanner;
 
 /**
  *
  * @author Cameron
+ * @author Tamim
  */
 public class PlayingCard extends Card {
     private final int rank;
@@ -46,6 +48,7 @@ public class PlayingCard extends Card {
      * If a suit was declared after an 8, the declared suit overrides the top card's suit.
      * @param other the current top card
      * @param declaredSuit the suit declared by the player who played an 8 (-1 if no declaration active)
+     * @return true if this card can be played
      */
     public boolean canPlayOn(PlayingCard other, int declaredSuit) {
         if (other == null) {
@@ -64,10 +67,35 @@ public class PlayingCard extends Card {
     }
 
     /**
-     * Convenience overload with no declared suit (declaredSuit = -1).
+     * Convenience overload with no declared suit.
+     * @param other the current top card
+     * @return true if this card can be played
      */
     public boolean canPlayOn(PlayingCard other) {
         return canPlayOn(other, -1);
+    }
+
+    /**
+     * Prompts the player to choose a new suit after playing an 8.
+     * Returns a dummy PlayingCard with rank 7 and the chosen suit.
+     * @param scanner the shared Scanner
+     * @return a PlayingCard representing the declared suit
+     */
+    public PlayingCard chooseSuit(Scanner scanner) {
+        if (this.getRank() != 7) {
+            return this;
+        }
+        System.out.println("You have played an 8. Select the new suit.");
+        System.out.println("0. Hearts  1. Diamonds  2. Clubs  3. Spades");
+        System.out.print("Enter your choice: ");
+        int newSuit = Integer.parseInt(scanner.nextLine());
+        if (newSuit < 0 || newSuit > 3) {
+            System.out.println("INVALID INPUT: Suit will remain unchanged.");
+            return this;
+        }
+        PlayingCard newCard = new PlayingCard(this.rank, newSuit);
+        System.out.println("Suit changed to: " + newCard.getSuitName());
+        return newCard;
     }
 
     @Override
