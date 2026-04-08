@@ -7,6 +7,7 @@ import java.util.ArrayList;
  * Extends GroupOfCards with the ability to initialize and replace the card list.
  *
  * @author Cameron - Apr 2026
+ * @author Tamim 
  */
 public class Deck extends GroupOfCards {
 
@@ -34,6 +35,7 @@ public class Deck extends GroupOfCards {
      * Replaces the current cards in the deck (used when reshuffling the discard pile).
      * @param cards the new list of cards
      */
+    @Override
     public void setCards(ArrayList<Card> cards) {
         getCards().clear();
         getCards().addAll(cards);
