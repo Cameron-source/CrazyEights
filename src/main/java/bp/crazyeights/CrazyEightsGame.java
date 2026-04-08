@@ -274,13 +274,11 @@ public class CrazyEightsGame extends Game {
                         default: {
                             System.out.println("Invalid choice.");
                             break;
-                        }
-                       
-                       
-                    }
-                                
+                        }     
+                    }  
                 }
             }
+            
             // line to break up turn text
             System.out.println("====================\n");
             
