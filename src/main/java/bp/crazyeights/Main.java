@@ -18,7 +18,7 @@ public class Main {
         // condition: player count must be between 2 and 4
         while (numPlayers < 2 || numPlayers > 12) {
             System.out.println("There must be a minimum of 2 players per game and a maximum of 12.");
-            System.out.print("How many players? (");
+            System.out.print("How many players? ");
             numPlayers = scanner.nextInt();
             scanner.nextLine();
         }

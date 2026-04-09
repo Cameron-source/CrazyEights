@@ -70,6 +70,8 @@ public class CrazyEightsPlayer extends Player {
 
     /**
      * Convenience overload with no declared suit.
+     * @param topCard current top card
+     * @return 
      */
     public boolean hasPlayableCard(PlayingCard topCard) {
         return hasPlayableCard(topCard, -1);
@@ -78,8 +80,8 @@ public class CrazyEightsPlayer extends Player {
     /**
      * Finds and plays (removes from hand) the first card that can be played on the given card.
      * Returns null if no card can be played.
-     * @param topCard
-     * @return 
+     * @param topCard current top card
+     * @return card 
      */
     public PlayingCard playCard(PlayingCard topCard) {
         for (int i = 0; i < hand.size(); i++) {

@@ -23,7 +23,7 @@ public class CrazyEightsGame extends Game {
 
     private int turnNumber = 1; // global turn counter
     private final Scanner scanner;
-    private int deckSize;
+    private final int deckSize;
 
     public CrazyEightsGame(Scanner scanner, int deckSize) {
         super("Crazy Eights");
@@ -43,6 +43,7 @@ public class CrazyEightsGame extends Game {
                 }
             }
         }
+        
         deck.setSize(deckSize);
         deck.setCards(cards);
         deck.shuffle();
@@ -184,6 +185,7 @@ public class CrazyEightsGame extends Game {
                 System.out.println(player.getName() + " wins!");
                 break;
             }
+            
             System.out.println();
             currentPlayerIndex = (currentPlayerIndex + 1) % getPlayers().size();
             turnNumber++;
