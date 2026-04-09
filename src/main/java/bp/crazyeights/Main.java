@@ -12,12 +12,12 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("How many players? (Min: 2, Max: 4) ");
+        System.out.print("How many players? (Min: 2, Max: 12) ");
         int numPlayers = scanner.nextInt();
         scanner.nextLine();
         // condition: player count must be between 2 and 4
-        while (numPlayers < 2 || numPlayers > 4) {
-            System.out.println("There must be a minimum of 2 players per game and a maximum of 4.");
+        while (numPlayers < 2 || numPlayers > 12) {
+            System.out.println("There must be a minimum of 2 players per game and a maximum of 12.");
             System.out.print("How many players? (");
             numPlayers = scanner.nextInt();
             scanner.nextLine();
@@ -28,6 +28,7 @@ public class Main {
         if (numPlayers > 6) {
             deckSize = 104;
         }
+        
         ArrayList<Player> players = new ArrayList<>();
         for (int i = 1; i <= numPlayers; i++) {
             System.out.print("Enter name for player " + i + ": ");
